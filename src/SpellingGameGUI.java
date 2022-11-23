@@ -25,7 +25,7 @@ public class SpellingGameGUI{
 	public SpellingGameGUI() {
 		createWindow();
 		createMenuPage();
-		
+		createLeaderboard();
 		window.setVisible(true);
 	}
 	
@@ -85,12 +85,12 @@ public class SpellingGameGUI{
 		
 		viewScores.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				showLeaderboard();
+				leaderboardwindow.setVisible(true);
 			}
 		});
 	}
 	
-	public void showLeaderboard() {
+	public void createLeaderboard() {
 		ResultSet result = null;
 		try {
 			result = sql.selectAll();
@@ -109,6 +109,7 @@ public class SpellingGameGUI{
 		JLabel enter = new JLabel("Sort by username: ");
 		JTextField input = new JTextField(10);
 		JButton menu = new JButton("Back to menu");
+		JButton seeall = new JButton("See all");
 		
 		toppanel.setLayout(new BoxLayout(toppanel,BoxLayout.X_AXIS));
 		helper.setLayout(new BoxLayout(helper,BoxLayout.Y_AXIS));
@@ -120,6 +121,7 @@ public class SpellingGameGUI{
 		
 		helper.add(enter);
 		helper.add(input);
+		helper.add(seeall);
 		
 		helper.add(Box.createVerticalStrut(30));
 		
@@ -138,8 +140,54 @@ public class SpellingGameGUI{
 		
 		leaderboardwindow.setSize(400,300);
 		leaderboardwindow.setContentPane(toppanel);
-		leaderboardwindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		leaderboardwindow.setVisible(true);
+		leaderboardwindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		leaderboardwindow.setVisible(false);
+		
+		menu.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				leaderboardwindow.setVisible(false);
+			}
+		});
+		
+		input.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ResultSet results = null;
+				try {
+					results = sql.usernameQuery(input.getText());
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
+				TableModel tablemodel = new TableModel(results);
+				JTable table = new JTable(tablemodel);
+				table.getColumnModel().getColumn(0).setMaxWidth(100);
+				table.getColumnModel().getColumn(1).setMaxWidth(90);
+				table.getColumnModel().getColumn(2).setMaxWidth(110);
+				JScrollPane scrollpane2 = new JScrollPane(table);
+				scrollpane.setViewportView(scrollpane2);
+			}
+		});
+		
+		seeall.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ResultSet results = null;
+				try {
+					results = sql.selectAll();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
+				TableModel tablemodel = new TableModel(results);
+				JTable table = new JTable(tablemodel);
+				table.getColumnModel().getColumn(0).setMaxWidth(100);
+				table.getColumnModel().getColumn(1).setMaxWidth(90);
+				table.getColumnModel().getColumn(2).setMaxWidth(110);
+				JScrollPane scrollpane2 = new JScrollPane(table);
+				scrollpane.setViewportView(scrollpane2);
+			}
+		});
 	}
 
 	public void createGamePage() {
