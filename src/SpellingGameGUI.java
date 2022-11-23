@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,12 +13,13 @@ public class SpellingGameGUI{
 	private static SQL sql;
 	private String username;
 	private int score;
-	private JFrame window;
+	private JFrame window,leaderboardwindow;
 	private JPanel menutop, menutitle, menubuttons, gametop, gamehelper;
 	private JButton playButton,viewScores;
 	private JLabel titleLabel, description, timer, enter,textarea, yourhive, hive;
 	private JTextField input;
 	private JTextArea scores;
+	private JScrollPane scoresholder;
 	private Timer counter;
 	
 	public SpellingGameGUI() {
@@ -42,10 +44,13 @@ public class SpellingGameGUI{
 	
 	public void createMenuPage() {
 		menutop = new JPanel();
+		menutop.setBackground(Color.LIGHT_GRAY);
 		menutop.setLayout(new BoxLayout(menutop, BoxLayout.Y_AXIS));
 		menutitle = new JPanel();
+		menutitle.setBackground(Color.LIGHT_GRAY);
 		menutitle.setLayout(new BoxLayout(menutitle, BoxLayout.Y_AXIS));
 		menubuttons = new JPanel(new FlowLayout());
+		menubuttons.setBackground(Color.LIGHT_GRAY);
 		
 		playButton = new JButton("Let's Play!");
 		viewScores = new JButton("Leaderboard");
@@ -77,8 +82,66 @@ public class SpellingGameGUI{
 				window.validate();
 			}
 		});
+		
+		viewScores.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				showLeaderboard();
+			}
+		});
 	}
 	
+	public void showLeaderboard() {
+		ResultSet result = null;
+		try {
+			result = sql.selectAll();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		TableModel tablemodel = new TableModel(result);
+		JTable table = new JTable(tablemodel);
+		JScrollPane scrollpane = new JScrollPane(table);
+		leaderboardwindow = new JFrame("Leaderboard");
+		JPanel helper = new JPanel();
+		JPanel toppanel = new JPanel();
+		JPanel buttonpanel = new JPanel(new FlowLayout());
+		JLabel enter = new JLabel("Sort by username: ");
+		JTextField input = new JTextField(10);
+		JButton menu = new JButton("Back to menu");
+		
+		toppanel.setLayout(new BoxLayout(toppanel,BoxLayout.X_AXIS));
+		helper.setLayout(new BoxLayout(helper,BoxLayout.Y_AXIS));
+		
+		toppanel.add(Box.createHorizontalStrut(50));
+		toppanel.add(Box.createHorizontalGlue());
+		
+		helper.add(Box.createVerticalGlue());
+		
+		helper.add(enter);
+		helper.add(input);
+		
+		helper.add(Box.createVerticalStrut(30));
+		
+		helper.add(scrollpane);
+		
+		helper.add(Box.createVerticalStrut(30));
+		
+		buttonpanel.add(menu);
+		helper.add(buttonpanel);
+		
+		helper.add(Box.createVerticalGlue());
+		
+		toppanel.add(helper);
+		toppanel.add(Box.createHorizontalGlue());
+		toppanel.add(Box.createHorizontalStrut(50));
+		
+		leaderboardwindow.setSize(400,300);
+		leaderboardwindow.setContentPane(toppanel);
+		leaderboardwindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		leaderboardwindow.setVisible(true);
+	}
+
 	public void createGamePage() {
 		StringBuilder playerwords = new StringBuilder();
 		Set<String> usedwords = new HashSet<String>();
@@ -149,7 +212,8 @@ public class SpellingGameGUI{
 		gamehelper.add(Box.createVerticalStrut(30));
 		
 		gamehelper.add(textarea);
-		gamehelper.add(scores);
+		scoresholder = new JScrollPane(scores);
+		gamehelper.add(scoresholder);
 		
 		gamehelper.add(Box.createVerticalGlue());
 		
@@ -158,7 +222,6 @@ public class SpellingGameGUI{
 		input.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String s = input.getText();
-				System.out.println(s);
 				Boolean check = game.checkValid(s) && game.checkLetters(s) && !usedwords.contains(s);
 				if(check) {
 					usedwords.add(s);

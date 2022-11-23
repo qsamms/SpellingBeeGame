@@ -46,7 +46,7 @@ public class SQL{
 		System.out.println("Executing a query");
 		StringBuilder query = new StringBuilder();
 		
-		query.append("select * from scores where username = '" + username + "'");
+		query.append("select * from scores where username = '" + username + "'" + " order by score desc;");
 		String stringQuery = query.toString();
 		return statement.executeQuery(stringQuery);
 	}
@@ -54,7 +54,7 @@ public class SQL{
 	public ResultSet selectAll() throws SQLException {
 		System.out.println("Executing a query");
 		
-		return statement.executeQuery("select * from scores");
+		return statement.executeQuery("select * from scores order by score desc");
 	}
 
 	public static void main(String[] args) {
