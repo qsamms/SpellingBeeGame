@@ -13,8 +13,8 @@ import org.json.simple.parser.ParseException;
 
 public class SpellingGame{
 	private static String username;
-	private static StringBuilder hive; 
-	private static Set<Character> hiveLetters;
+	StringBuilder hive; 
+	Set<Character> hiveLetters;
 	private static char[] upperConstanants = {'B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 
 			'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'X','Z'};
 	private static char[] lowerConstanants = {'b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 
@@ -22,28 +22,13 @@ public class SpellingGame{
 	private static char[] upperVowels = {'A', 'E', 'I', 'O', 'U', 'Y'};
 	private static char[] lowerVowels = {'a', 'e', 'i', 'o', 'u', 'y'};
 	
-	public static void main(String[] args) {
-		Scanner scanner = new Scanner(System.in);
-		scanner.useDelimiter(System.lineSeparator());
-		generateHive();
-
-		System.out.println(hive);
-		System.out.println(hiveLetters.toString());
-		
-		System.out.println("Enter words: ");
-		while(true) {
-			String word = scanner.nextLine();
-			
-			System.out.println(checkLetters(word) && checkValid(word));
-		}
-	}
-	
-	public static void generateHive() {
+	public void generateHive() {
 		hiveLetters = new HashSet<Character>();
 		hive = new StringBuilder();
 		Random rand = new Random();
 		int int_random;
 		
+		//two constanants
 		for(int i = 0;i<2;i++) {
 			int_random = rand.nextInt(20);
 			hive.append(upperConstanants[int_random]);
@@ -51,6 +36,7 @@ public class SpellingGame{
 			hiveLetters.add(lowerConstanants[int_random]);
 		}
 		
+		//two vowels
 		for(int i = 0;i< 2;i++) {
 			int_random = rand.nextInt(6);
 			hive.append(upperVowels[int_random]);
@@ -58,6 +44,7 @@ public class SpellingGame{
 			hiveLetters.add(lowerVowels[int_random]);
 		}
 		
+		//two constanants
 		for(int i = 0;i<2;i++) {
 			int_random = rand.nextInt(20);
 			hive.append(upperConstanants[int_random]);
@@ -68,7 +55,7 @@ public class SpellingGame{
 		
 	}
 	
-	public static Boolean checkValid(String word) {
+	public Boolean checkValid(String word) {
 		String createString = "https://wordsapiv1.p.rapidapi.com/words/" + word + "/definitions";
 		
 		//create request
@@ -107,7 +94,7 @@ public class SpellingGame{
 		} else return true;
 	}
 	
-	public static Boolean checkLetters(String word) {
+	public Boolean checkLetters(String word) {
 		for(int i = 0;i<word.length();i++) {
 			if(!(hiveLetters.contains(word.charAt(i)))){
 				return false;
