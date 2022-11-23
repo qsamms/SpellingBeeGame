@@ -21,10 +21,13 @@ public class SpellingGameGUI{
 	private JTextArea scores;
 	private JScrollPane scoresholder;
 	private Timer counter;
+	private StringBuilder playerwords = new StringBuilder();
+	private Set<String> usedwords = new HashSet<String>();
 	
 	public SpellingGameGUI() {
 		createWindow();
 		createMenuPage();
+		createGamePage();
 		createLeaderboard();
 		window.setVisible(true);
 	}
@@ -77,9 +80,9 @@ public class SpellingGameGUI{
 		playButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				username = JOptionPane.showInputDialog(window, "Enter username", "Username", JOptionPane.PLAIN_MESSAGE);
-				createGamePage();
 				window.setContentPane(gametop);
 				window.validate();
+				resetGame();
 			}
 		});
 		
@@ -189,14 +192,18 @@ public class SpellingGameGUI{
 			}
 		});
 	}
-
-	public void createGamePage() {
-		StringBuilder playerwords = new StringBuilder();
-		Set<String> usedwords = new HashSet<String>();
-		
+	
+	public void resetGame() {
 		score = 0;
-		int delay = 1000;
+		usedwords.clear();
+		playerwords.setLength(0);
+		scores.setText("");
+		timer.setText("1:00");
+		textarea.setText("Your score: " + score);
+		String hiveletters = game.generateHive();
+		hive.setText(hiveletters);
 		
+		int delay = 1000;
 		ActionListener taskPerformer = new ActionListener() { 
 			int time = 60;
 			public void actionPerformed(ActionEvent e) {
@@ -220,7 +227,9 @@ public class SpellingGameGUI{
 		};
 		counter = new Timer(delay,taskPerformer);
 		counter.start();
-		
+	}
+
+	public void createGamePage() {
 		gametop = new JPanel();
 		gamehelper = new JPanel();
 		timer = new JLabel();
@@ -279,9 +288,8 @@ public class SpellingGameGUI{
 					playerwords.append(s + ": " + wordscore + "\n");
 					String area = playerwords.toString();
 					scores.setText(area);
-				}else {
-					input.setText("invalid input!");
 				}
+				
 				input.setText("");
 			}
 		});

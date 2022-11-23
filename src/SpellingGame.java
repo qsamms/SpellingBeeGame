@@ -12,8 +12,9 @@ import org.json.simple.parser.ParseException;
 
 
 public class SpellingGame{
-	StringBuilder hive; 
-	Set<Character> hiveLetters;
+	StringBuilder hive = new StringBuilder(); 
+	Set<Character> hiveLetters = new HashSet<Character>();
+	Random rand = new Random();
 	private static char[] upperConstanants = {'B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 
 			'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'X','Z'};
 	private static char[] lowerConstanants = {'b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 
@@ -22,9 +23,8 @@ public class SpellingGame{
 	private static char[] lowerVowels = {'a', 'e', 'i', 'o', 'u', 'y'};
 	
 	public String generateHive() {
-		hiveLetters = new HashSet<Character>();
-		hive = new StringBuilder();
-		Random rand = new Random();
+		hiveLetters.clear();
+		hive.setLength(0);
 		int int_random;
 		
 		//two constanants
