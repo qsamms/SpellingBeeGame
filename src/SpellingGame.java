@@ -5,14 +5,13 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.HashSet;
 import java.util.Random;
-import java.util.Scanner;
 import java.util.Set;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+
 public class SpellingGame{
-	private static String username;
 	StringBuilder hive; 
 	Set<Character> hiveLetters;
 	private static char[] upperConstanants = {'B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 
@@ -101,5 +100,24 @@ public class SpellingGame{
 			}
 		}
 		return true;
+	}
+	
+	public int getScore(String word) {
+		int length = word.length();
+		
+		if(length == 1) {
+			return 25;
+		}else if(length == 2) {
+			return 50;
+		}else if(length == 3) {
+			return 100;
+		}else if(length == 4) {
+			return 200;
+		}else if(length == 5) {
+			return 300;
+		}else{
+			return 500;
+		}
+		
 	}
 }
