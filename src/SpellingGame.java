@@ -21,7 +21,7 @@ public class SpellingGame{
 	private static char[] upperVowels = {'A', 'E', 'I', 'O', 'U', 'Y'};
 	private static char[] lowerVowels = {'a', 'e', 'i', 'o', 'u', 'y'};
 	
-	public void generateHive() {
+	public String generateHive() {
 		hiveLetters = new HashSet<Character>();
 		hive = new StringBuilder();
 		Random rand = new Random();
@@ -51,7 +51,7 @@ public class SpellingGame{
 			hiveLetters.add(lowerConstanants[int_random]);
 		}
 		
-		
+		return hive.toString();
 	}
 	
 	public Boolean checkValid(String word) {

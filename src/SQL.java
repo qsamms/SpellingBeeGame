@@ -26,7 +26,7 @@ public class SQL{
 		}
 	}
 	
-	public static void insert(String username, int score, String table) throws SQLException {
+	public void insert(String username, int score, String table) throws SQLException {
 		PreparedStatement p;
 		
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -42,26 +42,19 @@ public class SQL{
 		
 	}
 	
-	public ResultSet selectQuery(String username) throws SQLException {
+	public ResultSet usernameQuery(String username) throws SQLException {
 		System.out.println("Executing a query");
 		StringBuilder query = new StringBuilder();
 		
 		query.append("select * from scores where username = '" + username + "'");
 		String stringQuery = query.toString();
-		System.out.println(stringQuery);
-		
 		return statement.executeQuery(stringQuery);
 	}
 	
 	public ResultSet selectAll() throws SQLException {
 		System.out.println("Executing a query");
-		StringBuilder query = new StringBuilder();
 		
-		query.append("select * from scores");
-		String stringQuery = query.toString();
-		System.out.println(stringQuery);
-		
-		return statement.executeQuery(stringQuery);
+		return statement.executeQuery("select * from scores");
 	}
 
 	public static void main(String[] args) {
