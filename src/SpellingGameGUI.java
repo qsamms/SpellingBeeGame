@@ -23,6 +23,7 @@ public class SpellingGameGUI{
 	private Timer counter;
 	private StringBuilder playerwords = new StringBuilder();
 	private Set<String> usedwords = new HashSet<String>();
+	private Color color = new Color(242,219,179);
 	
 	public SpellingGameGUI() {
 		createWindow();
@@ -47,13 +48,13 @@ public class SpellingGameGUI{
 	
 	public void createMenuPage() {
 		menutop = new JPanel();
-		menutop.setBackground(Color.LIGHT_GRAY);
+		menutop.setBackground(color);
 		menutop.setLayout(new BoxLayout(menutop, BoxLayout.Y_AXIS));
 		menutitle = new JPanel();
-		menutitle.setBackground(Color.LIGHT_GRAY);
+		menutitle.setBackground(color);
 		menutitle.setLayout(new BoxLayout(menutitle, BoxLayout.Y_AXIS));
 		menubuttons = new JPanel(new FlowLayout());
-		menubuttons.setBackground(Color.LIGHT_GRAY);
+		menubuttons.setBackground(color);
 		
 		playButton = new JButton("Let's Play!");
 		viewScores = new JButton("Leaderboard");
@@ -98,7 +99,6 @@ public class SpellingGameGUI{
 		try {
 			result = sql.selectAll();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -107,8 +107,11 @@ public class SpellingGameGUI{
 		JScrollPane scrollpane = new JScrollPane(table);
 		leaderboardwindow = new JFrame("Leaderboard");
 		JPanel helper = new JPanel();
+		helper.setBackground(color);
 		JPanel toppanel = new JPanel();
+		toppanel.setBackground(color);
 		JPanel buttonpanel = new JPanel(new FlowLayout());
+		buttonpanel.setBackground(color);
 		JLabel enter = new JLabel("Sort by username: ");
 		JTextField input = new JTextField(10);
 		JButton menu = new JButton("Back to menu");
@@ -158,7 +161,6 @@ public class SpellingGameGUI{
 				try {
 					results = sql.usernameQuery(input.getText());
 				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 				
@@ -178,7 +180,6 @@ public class SpellingGameGUI{
 				try {
 					results = sql.selectAll();
 				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 				
@@ -199,6 +200,7 @@ public class SpellingGameGUI{
 		playerwords.setLength(0);
 		scores.setText("");
 		timer.setText("1:00");
+		timer.setForeground(Color.BLACK);
 		textarea.setText("Your score: " + score);
 		String hiveletters = game.generateHive();
 		hive.setText(hiveletters);
@@ -231,7 +233,9 @@ public class SpellingGameGUI{
 
 	public void createGamePage() {
 		gametop = new JPanel();
+		gametop.setBackground(color);
 		gamehelper = new JPanel();
+		gamehelper.setBackground(color);
 		timer = new JLabel();
 		hive = new JLabel();
 		hive.setFont(new Font("TimesRoman",Font.BOLD, 30));
@@ -254,8 +258,6 @@ public class SpellingGameGUI{
 		
 		gamehelper.add(Box.createVerticalStrut(30));
 		
-		String hiveletters = game.generateHive();
-		hive.setText(hiveletters);
 		gamehelper.add(hive);
 
 		
@@ -303,7 +305,6 @@ public class SpellingGameGUI{
 		try {
 			sql.insert(username, score, "scores");
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
