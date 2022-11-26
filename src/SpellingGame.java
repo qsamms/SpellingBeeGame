@@ -23,8 +23,8 @@ public class SpellingGame{
 			'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'X','Z'};
 	private static char[] lowerConstanants = {'b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 
 			'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x','z'};
-	private static char[] upperVowels = {'A', 'E', 'I', 'O', 'U', 'Y'};
-	private static char[] lowerVowels = {'a', 'e', 'i', 'o', 'u', 'y'};
+	private static char[] upperVowels = {'A', 'E', 'I', 'O', 'U'};
+	private static char[] lowerVowels = {'a', 'e', 'i', 'o', 'u'};
 	
 	public String generateHive() {
 		startLetters.clear();
@@ -45,9 +45,9 @@ public class SpellingGame{
 		
 		//two vowels
 		for(int i = 0;i< 2;i++) {
-			int_random = rand.nextInt(6);
+			int_random = rand.nextInt(5);
 			while(hiveLetters.contains(upperVowels[int_random])) {
-				int_random = rand.nextInt(6);
+				int_random = rand.nextInt(5);
 			}
 			hive.append(upperVowels[int_random]);
 			hiveLetters.add(upperVowels[int_random]);
