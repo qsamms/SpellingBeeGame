@@ -17,9 +17,9 @@ public class SpellingGameGUI{
 	private String username;
 	private int score;
 	private JFrame window,leaderboardwindow;
-	private JPanel menutop, menutitle, menubuttons, gametop, gamehelper;
+	private JPanel menutop, menutitle, menubuttons, gametop, gamehelper, hivePanel, rulesPanel;
 	private JButton playButton,viewScores;
-	private JLabel titleLabel, description, timer, enter,textarea, yourhive, hive;
+	private JLabel titleLabel, description, timer,textarea, yourhive, hive, errorLabel, letters, rules;
 	private JTextField input;
 	private JTextArea scores;
 	private JScrollPane scoresholder;
@@ -70,6 +70,15 @@ public class SpellingGameGUI{
 		menutitle.setLayout(new BoxLayout(menutitle, BoxLayout.Y_AXIS));
 		menubuttons = new JPanel(new FlowLayout());
 		menubuttons.setBackground(color);
+		rulesPanel = new JPanel();
+		rulesPanel.setLayout(new BoxLayout(rulesPanel, BoxLayout.Y_AXIS));
+		rules = new JLabel("Rules: ");
+		rules.setFont(new Font("TimesRoman", Font.BOLD, 16));
+		JLabel words = new JLabel("Words must be at least 3 characters long ");
+		words.setFont(new Font("TimesRoman", Font.PLAIN, 16));
+		JLabel start = new JLabel("Words must start with one of the two given letters");
+		start.setFont(new Font("TimesRoman", Font.PLAIN, 16));
+		rulesPanel.setBackground(color);
 		
 		playButton = new JButton("Let's Play!");
 		viewScores = new JButton("Leaderboard");
@@ -83,11 +92,19 @@ public class SpellingGameGUI{
 		menubuttons.add(viewScores);
 
 		menutitle.add(titleLabel,BorderLayout.CENTER);
-		menutitle.add(Box.createVerticalStrut(50));
+		menutitle.add(Box.createVerticalStrut(20));
 		menutitle.add(description,BorderLayout.SOUTH);
 		
 		menutop.add(Box.createVerticalGlue());
 		menutop.add(menutitle);
+		
+		menutop.add(Box.createVerticalStrut(30));
+		rulesPanel.add(rules);
+		rulesPanel.add(words);
+		rulesPanel.add(start);
+		menutop.add(rulesPanel);
+		
+		
 		menutop.add(Box.createVerticalStrut(50));
 		menutop.add(menubuttons);
 		
@@ -98,7 +115,7 @@ public class SpellingGameGUI{
 				username = JOptionPane.showInputDialog(window, "Enter username", "Username", JOptionPane.PLAIN_MESSAGE);
 				window.setContentPane(gametop);
 				window.validate();
-				resetGame();
+				startNewGame();
 			}
 		});
 		
@@ -257,7 +274,7 @@ public class SpellingGameGUI{
 		});
 	}
 	
-	public void resetGame() {
+	public void startNewGame() {
 		score = 0;
 		usedwords.clear();
 		playerwords.setLength(0);
@@ -267,6 +284,11 @@ public class SpellingGameGUI{
 		textarea.setText("Your score: " + score);
 		String hiveletters = game.generateHive();
 		hive.setText(hiveletters);
+		String startingletters = game.startLetters.toString();
+		StringBuilder s = new StringBuilder();
+		s.append(startingletters.charAt(1) + ", ");
+		s.append(startingletters.charAt(7));
+		letters.setText("Starting Letters: " + s);
 		
 		int delay = 1000;
 		ActionListener taskPerformer = new ActionListener() { 
@@ -295,6 +317,17 @@ public class SpellingGameGUI{
 	}
 
 	public void createGamePage() {
+		JPanel timerPanel = new JPanel();
+		JPanel textareaPanel = new JPanel();
+		textareaPanel.setLayout(new BoxLayout(textareaPanel, BoxLayout.Y_AXIS));
+		textareaPanel.setBackground(color);
+		JPanel startLetters = new JPanel(new FlowLayout());
+		JPanel errorholder = new JPanel();
+		errorholder.setBackground(color);
+		startLetters.setBackground(color);
+		letters = new JLabel();
+		letters.setFont(new Font("TimesRoman",Font.BOLD, 20));
+
 		gametop = new JPanel();
 		gametop.setBackground(color);
 		gamehelper = new JPanel();
@@ -303,40 +336,55 @@ public class SpellingGameGUI{
 		hive = new JLabel();
 		hive.setFont(new Font("TimesRoman",Font.BOLD, 30));
 		input = new JTextField(10);
-		enter = new JLabel("Enter words: ");
 		textarea = new JLabel("Your score: " + score);
 		scores = new JTextArea();
+		errorLabel = new JLabel();
+		hivePanel = new JPanel(new FlowLayout());
 		
 		yourhive = new JLabel("Hive:");
 		gamehelper.setLayout(new BoxLayout(gamehelper, BoxLayout.Y_AXIS));
 		
-		gamehelper.add(Box.createVerticalStrut(30));
+		startLetters.add(letters);
+		gamehelper.add(Box.createVerticalStrut(20));
 		timer.setFont(new Font("TimesRoman", Font.BOLD, 30));
-		gamehelper.add(timer);
+		timerPanel.add(timer);
+		timerPanel.setBackground(color);
+		gamehelper.add(timerPanel);
 		
-		gamehelper.add(Box.createVerticalStrut(30));
+		gamehelper.add(Box.createVerticalStrut(10));
 		
 		yourhive.setFont(new Font("TimesRoman",Font.BOLD, 30));
 		gamehelper.add(yourhive);
 		
-		gamehelper.add(Box.createVerticalStrut(30));
+		gamehelper.add(Box.createVerticalStrut(20));
 		
-		gamehelper.add(hive);
-
+		hivePanel.add(yourhive);
+		hivePanel.add(hive);
+		hivePanel.setBackground(color);
+		gamehelper.add(hivePanel);
+		
+		gamehelper.add(Box.createVerticalStrut(20));
+		
+		gamehelper.add(startLetters);
+		gamehelper.add(Box.createVerticalStrut(20));
+		errorholder.add(errorLabel);
+		gamehelper.add(errorholder);
 		
 		input.setSize(new Dimension(50,50));
 		input.setPreferredSize(new Dimension(50,50));
-		gamehelper.add(Box.createVerticalStrut(50));
 		
-		gamehelper.add(enter);
+		gamehelper.add(Box.createVerticalStrut(20));
+	
 		gamehelper.add(input);
 		
-		gamehelper.add(Box.createVerticalStrut(30));
+		gamehelper.add(Box.createVerticalStrut(20));
 		
-		gamehelper.add(textarea);
+		textareaPanel.add(textarea);
+		textareaPanel.add(Box.createVerticalStrut(10));
 		scores.setRows(10);
 		scoresholder = new JScrollPane(scores);
-		gamehelper.add(scoresholder);
+		textareaPanel.add(scoresholder);
+		gamehelper.add(textareaPanel);
 		
 		gamehelper.add(Box.createVerticalGlue());
 		
@@ -345,8 +393,8 @@ public class SpellingGameGUI{
 		input.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String s = input.getText();
-				Boolean check = game.checkValid(s) && game.checkLetters(s) && !usedwords.contains(s);
-				if(check) {
+				try {
+					game.checkValid(s, usedwords);
 					usedwords.add(s);
 					int wordscore = game.getScore(s);
 					score += wordscore;
@@ -354,8 +402,24 @@ public class SpellingGameGUI{
 					playerwords.append(s + ": " + wordscore + "\n");
 					String area = playerwords.toString();
 					scores.setText(area);
+					errorLabel.setText("Nice!");
+					errorLabel.setForeground(Color.GREEN);
+				}catch(NotaWordException e1) {
+					errorLabel.setText(e1.getMessage());
+					errorLabel.setForeground(Color.RED);
+				}catch(LettersException e2) {
+					errorLabel.setText(e2.getMessage());
+					errorLabel.setForeground(Color.RED);
+				}catch(WordUsedException e3){
+					errorLabel.setText(e3.getMessage());
+					errorLabel.setForeground(Color.RED);
+				} catch (TooShortException e4) {
+					errorLabel.setText(e4.getMessage());
+					errorLabel.setForeground(Color.RED);
+				} catch (StartLetterException e5) {
+					errorLabel.setText(e5.getMessage());
+					errorLabel.setForeground(Color.RED);
 				}
-				
 				input.setText("");
 			}
 		});

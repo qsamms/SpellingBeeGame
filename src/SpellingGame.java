@@ -3,7 +3,9 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import org.json.simple.JSONObject;
@@ -13,7 +15,9 @@ import org.json.simple.parser.ParseException;
 
 public class SpellingGame{
 	StringBuilder hive = new StringBuilder(); 
+	String lowercaseHive;
 	Set<Character> hiveLetters = new HashSet<Character>();
+	Set<Character> startLetters = new HashSet<Character>();
 	Random rand = new Random();
 	private static char[] upperConstanants = {'B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 
 			'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'X','Z'};
@@ -23,12 +27,13 @@ public class SpellingGame{
 	private static char[] lowerVowels = {'a', 'e', 'i', 'o', 'u', 'y'};
 	
 	public String generateHive() {
+		startLetters.clear();
 		hiveLetters.clear();
 		hive.setLength(0);
 		int int_random;
 		
 		//two constanants
-		for(int i = 0;i<2;i++) {
+		for(int i = 0;i<3;i++) {
 			int_random = rand.nextInt(20);
 			while(hiveLetters.contains(upperConstanants[int_random])) {
 				int_random = rand.nextInt(20);
@@ -42,7 +47,7 @@ public class SpellingGame{
 		for(int i = 0;i< 2;i++) {
 			int_random = rand.nextInt(6);
 			while(hiveLetters.contains(upperVowels[int_random])) {
-				int_random = rand.nextInt(20);
+				int_random = rand.nextInt(6);
 			}
 			hive.append(upperVowels[int_random]);
 			hiveLetters.add(upperVowels[int_random]);
@@ -50,7 +55,7 @@ public class SpellingGame{
 		}
 		
 		//two constanants
-		for(int i = 0;i<2;i++) {
+		for(int i = 0;i<3;i++) {
 			int_random = rand.nextInt(20);
 			while(hiveLetters.contains(upperConstanants[int_random])) {
 				int_random = rand.nextInt(20);
@@ -60,10 +65,46 @@ public class SpellingGame{
 			hiveLetters.add(lowerConstanants[int_random]);
 		}
 		
+		shuffle(hive.toString());
+		String s = hive.toString();
+		lowercaseHive = s.toLowerCase();
+		getStartLetterIndexes();
 		return hive.toString();
 	}
 	
-	public Boolean checkValid(String word) {
+	public void shuffle(String input){
+        List<Character> characters = new ArrayList<Character>();
+        for(char c:input.toCharArray()){
+            characters.add(c);
+        }
+        StringBuilder output = new StringBuilder(input.length());
+        while(characters.size()!=0){
+            int randPicker = (int)(Math.random()*characters.size());
+            output.append(characters.remove(randPicker));
+        }
+        
+        hive = output;
+    }
+	
+	public void getStartLetterIndexes() {
+		int max = hive.length();
+		Set<Integer> startLetterIdx = new HashSet<Integer>();
+		int int_random;
+		
+		while(startLetters.size() < 4) {
+			int_random = rand.nextInt(max);
+			if(!startLetterIdx.contains(int_random)) {
+				startLetters.add(hive.charAt(int_random));
+				startLetters.add(lowercaseHive.charAt(int_random));
+				startLetterIdx.add(rand.nextInt(max));
+			}
+		}
+		System.out.println(startLetters.toString());
+	}
+	
+	public void checkValid(String word, Set<String> usedwords) throws NotaWordException, LettersException, WordUsedException, 
+	TooShortException, StartLetterException{
+		
 		String createString = "https://wordsapiv1.p.rapidapi.com/words/" + word + "/definitions";
 		
 		//create request
@@ -98,8 +139,24 @@ public class SpellingGame{
 		
 		//return whether the word is valid or not
 		if(jo.get("word") == null) {
-			return false;
-		} else return true;
+			throw new NotaWordException();
+		} 
+		
+		if(checkLetters(word) == false) {
+			throw new LettersException();
+		}
+		
+		if(usedwords.contains(word)) {
+			throw new WordUsedException();
+		}
+		
+		if(checkLength(word) == false) {
+			throw new TooShortException();
+		}
+		
+		if(checkStartletter(word) == false) {
+			throw new StartLetterException();
+		}
 	}
 	
 	public Boolean checkLetters(String word) {
@@ -109,6 +166,20 @@ public class SpellingGame{
 			}
 		}
 		return true;
+	}
+	
+	public Boolean checkLength(String word) {
+		if(word.length() < 3) {
+			return false;
+		}
+		return true;
+	}
+	
+	public Boolean checkStartletter(String word) {
+		if(startLetters.contains(word.charAt(0))) {
+			return true;
+		}
+		return false;
 	}
 	
 	public int getScore(String word) {
