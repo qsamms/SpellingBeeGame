@@ -279,6 +279,7 @@ public class SpellingGameGUI{
 		usedwords.clear();
 		playerwords.setLength(0);
 		scores.setText("");
+		input.setText("");
 		timer.setText("1:00");
 		timer.setForeground(Color.BLACK);
 		textarea.setText("Your score: " + score);
