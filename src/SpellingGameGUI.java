@@ -393,9 +393,10 @@ public class SpellingGameGUI{
 		input.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String s = input.getText();
+				String lowercaseS = s.toLowerCase();
 				try {
-					game.checkValid(s, usedwords);
-					usedwords.add(s);
+					game.checkValid(lowercaseS, usedwords);
+					usedwords.add(lowercaseS);
 					int wordscore = game.getScore(s);
 					score += wordscore;
 					textarea.setText("Your score: " + score);
