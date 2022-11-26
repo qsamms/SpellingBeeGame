@@ -6,7 +6,7 @@ public class SQL{
 	//private static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
 	private static final String DB_URL = "jdbc:mysql://localhost:3306/spellingbee";
 	private static String USER = "root";
-	private static String PASS = "District14champs";
+	private static String PASS = "rootpassword";
 	private static Connection connection;
 	private static Statement statement;
 	
