@@ -3,10 +3,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 
 public class SpellingGameGUI{
@@ -22,11 +24,22 @@ public class SpellingGameGUI{
 	private JTextArea scores;
 	private JScrollPane scoresholder;
 	private Timer counter;
+	private JTable currentTable;
 	private StringBuilder playerwords = new StringBuilder();
 	private Set<String> usedwords = new LinkedHashSet<String>();
 	private Color color = new Color(242,219,179);
-	private int nextid;
+	private int rowSelected;
+	private int idSelected;
+	ArrayList<String> queryWords = new ArrayList<String>();
 	
+	private ListSelectionListener tableListener = new ListSelectionListener() {
+		public void valueChanged(ListSelectionEvent e) {
+			ListSelectionModel selectModel = (ListSelectionModel) e.getSource();
+			rowSelected = selectModel.getMinSelectionIndex();
+			idSelected = Integer.parseInt((String) currentTable.getValueAt(rowSelected, 0));
+		}
+	};
+		
 	public SpellingGameGUI() {
 		createWindow();
 		createMenuPage();
@@ -106,6 +119,7 @@ public class SpellingGameGUI{
 		
 		TableModel tablemodel = new TableModel(result);
 		JTable table = new JTable(tablemodel);
+		currentTable = table;
 		JScrollPane scrollpane = new JScrollPane(table);
 		leaderboardwindow = new JFrame("Leaderboard");
 		JPanel helper = new JPanel();
@@ -114,10 +128,21 @@ public class SpellingGameGUI{
 		toppanel.setBackground(color);
 		JPanel buttonpanel = new JPanel(new FlowLayout());
 		buttonpanel.setBackground(color);
+		JPanel enterPanel = new JPanel(new FlowLayout());
+		enterPanel.setBackground(color);
 		JLabel enter = new JLabel("Sort by username: ");
 		JTextField input = new JTextField(10);
 		JButton menu = new JButton("Back to menu");
 		JButton seeall = new JButton("See all");
+		JTextArea words = new JTextArea();
+		JButton seeWords = new JButton("See Words");
+		JPanel seeAllPanel = new JPanel();
+		seeAllPanel.setBackground(color);
+		JPanel wordsPanel = new JPanel();
+		
+		wordsPanel.setBorder(BorderFactory.createTitledBorder("Words Used: "));
+		
+		table.getSelectionModel().addListSelectionListener(tableListener);
 		
 		toppanel.setLayout(new BoxLayout(toppanel,BoxLayout.X_AXIS));
 		helper.setLayout(new BoxLayout(helper,BoxLayout.Y_AXIS));
@@ -127,9 +152,15 @@ public class SpellingGameGUI{
 		
 		helper.add(Box.createVerticalGlue());
 		
-		helper.add(enter);
-		helper.add(input);
-		helper.add(seeall);
+		helper.add(Box.createVerticalStrut(30));
+		
+		enterPanel.add(enter);
+		enterPanel.add(input);
+		seeAllPanel.add(seeall);
+		
+		helper.add(enterPanel);
+		
+		helper.add(seeAllPanel);
 		
 		helper.add(Box.createVerticalStrut(30));
 		
@@ -138,7 +169,13 @@ public class SpellingGameGUI{
 		helper.add(Box.createVerticalStrut(30));
 		
 		buttonpanel.add(menu);
+		buttonpanel.add(seeWords);
 		helper.add(buttonpanel);
+		
+		helper.add(Box.createVerticalStrut(30));
+		
+		wordsPanel.add(words);
+		helper.add(wordsPanel);
 		
 		helper.add(Box.createVerticalGlue());
 		
@@ -146,7 +183,7 @@ public class SpellingGameGUI{
 		toppanel.add(Box.createHorizontalGlue());
 		toppanel.add(Box.createHorizontalStrut(50));
 		
-		leaderboardwindow.setSize(400,300);
+		leaderboardwindow.setSize(400,400);
 		leaderboardwindow.setContentPane(toppanel);
 		leaderboardwindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		leaderboardwindow.setVisible(false);
@@ -168,9 +205,12 @@ public class SpellingGameGUI{
 				
 				TableModel tablemodel = new TableModel(results);
 				JTable table = new JTable(tablemodel);
-				table.getColumnModel().getColumn(0).setMaxWidth(100);
-				table.getColumnModel().getColumn(1).setMaxWidth(90);
-				table.getColumnModel().getColumn(2).setMaxWidth(110);
+				currentTable = table;
+				table.getSelectionModel().addListSelectionListener(tableListener);
+				table.getColumnModel().getColumn(0).setMaxWidth(50);
+				table.getColumnModel().getColumn(1).setMaxWidth(100);
+				table.getColumnModel().getColumn(2).setMaxWidth(90);
+				table.getColumnModel().getColumn(3).setMaxWidth(110);
 				JScrollPane scrollpane2 = new JScrollPane(table);
 				scrollpane.setViewportView(scrollpane2);
 			}
@@ -187,11 +227,31 @@ public class SpellingGameGUI{
 				
 				TableModel tablemodel = new TableModel(results);
 				JTable table = new JTable(tablemodel);
-				table.getColumnModel().getColumn(0).setMaxWidth(100);
-				table.getColumnModel().getColumn(1).setMaxWidth(90);
-				table.getColumnModel().getColumn(2).setMaxWidth(110);
+				currentTable = table;
+				table.getSelectionModel().addListSelectionListener(tableListener);
+				table.getColumnModel().getColumn(0).setMaxWidth(50);
+				table.getColumnModel().getColumn(1).setMaxWidth(100);
+				table.getColumnModel().getColumn(2).setMaxWidth(90);
+				table.getColumnModel().getColumn(3).setMaxWidth(110);
 				JScrollPane scrollpane2 = new JScrollPane(table);
 				scrollpane.setViewportView(scrollpane2);
+			}
+		});
+		
+		seeWords.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				queryWords.clear();
+				ResultSet results = null;
+				try {
+					results = sql.wordsQuery(idSelected);
+					while(results.next()) {
+						queryWords.add(results.getString("word"));
+					}
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			
+				words.setText(queryWords.toString());
 			}
 		});
 	}
@@ -306,10 +366,8 @@ public class SpellingGameGUI{
 		
 		try {
 			String[] words = convertSetToArr();
-			nextid = sql.getMaxID();
-			nextid++;
-			sql.insert(nextid, username, score, "scores");
-			sql.insertWords(nextid, words);
+			sql.insert(username, score, "scores");
+			sql.insertWords(sql.getMaxID(), words);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -325,6 +383,7 @@ public class SpellingGameGUI{
 		
 		for(String s : usedwords) {
 			strings[idx] = s;
+			idx++;
 		}
 		
 		return strings;

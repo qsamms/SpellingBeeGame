@@ -1,4 +1,6 @@
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 import java.sql.ResultSet;
@@ -9,30 +11,6 @@ public class TableModel extends AbstractTableModel{
 	private static final long serialVersionUID = 1L;
 	private String[] columnNames = {"ID", "Username", "Score", "Date"};
 	private String[][] data;
-	
-	public static void main(String[] args) {
-		SQL sql = new SQL();
-		ResultSet result = null;
-		try {
-			result = sql.selectAll();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		TableModel tablemodel = new TableModel(result);
-		
-		JTable table = new JTable(tablemodel);
-		
-		JScrollPane scrollpane = new JScrollPane(table);
-		JFrame frame = new JFrame();
-		JPanel panel = new JPanel(new BorderLayout());
-		
-		frame.setContentPane(panel);
-		panel.add(scrollpane,BorderLayout.CENTER);
-		frame.pack();
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setVisible(true);
-	}
 	
 	public TableModel(ResultSet results){
 		ArrayList<String[]> rows = new ArrayList<String[]>();

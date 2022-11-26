@@ -25,30 +25,53 @@ public class SQL{
 		}
 	}
 	
-	public int getMaxID() throws SQLException{
+	public void insertWords(int id, String[] words) throws SQLException{
+		PreparedStatement p;
 		StringBuilder query = new StringBuilder();
-		query.append("select MAX(id) from scores;");
-		String q = query.toString();
+		String s;
 		
-		ResultSet result = statement.executeQuery(q);
-		
-		result.next();
-		return Integer.parseInt(result.getString("MAX(id)"));
+		for(int i = 0;i<words.length;i++) {
+			query.append("insert into words values (" + id + ", '" + words[i] + "');");
+			s = query.toString();
+			System.out.println(s);
+			p = connection.prepareStatement(s);
+			p.execute();
+			query.setLength(0);
+		}
 	}
 	
-	public void insertWords(int id, String[] words) {
+	public ResultSet wordsQuery(int id) throws SQLException {
+		System.out.println("Executing a query");
+		StringBuilder query = new StringBuilder();
 		
+		query.append("select * from words where userid = " + id + ";");
+		String stringQuery = query.toString();
+		return statement.executeQuery(stringQuery);
 	}
 	
-	public void insert(int id, String username, int score, String table) throws SQLException {
+	public int getMaxID() {
+		int val = -1;
+		
+		try {
+			ResultSet result = statement.executeQuery("select MAX(id) from scores;");
+			result.next();
+			val = Integer.parseInt(result.getString("MAX(id)"));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return val;
+	}
+	
+	public void insert(String username, int score, String table) throws SQLException {
 		PreparedStatement p;
 		
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		LocalDateTime now = LocalDateTime.now();
 		
 		StringBuilder query = new StringBuilder();
-		query.append("insert into " + table + " values");
-		query.append("(" + id + ", '" +  username + "'," + "'" + score + "'" + "," + " '" + dtf.format(now) + "');");
+		query.append("insert into " + table + " (username,score,date) values");
+		query.append("('" +  username + "'," + "'" + score + "'" + "," + " '" + dtf.format(now) + "');");
 		
 		String stringQuery = query.toString();
 		p = connection.prepareStatement(stringQuery);
@@ -71,16 +94,5 @@ public class SQL{
 		return statement.executeQuery("select * from scores order by score desc");
 	}
 	
-	public static void main(String[] args) {
-		SQL sql = new SQL();
-		ResultSet result = null;
-		
-		try {
-			result.next();
-			System.out.println(result.getString("MAX(id)"));
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 }
+	
