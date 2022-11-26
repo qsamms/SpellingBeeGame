@@ -1,6 +1,5 @@
 import java.sql.*;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.time.LocalDateTime;
 
 public class SQL{
@@ -26,7 +25,22 @@ public class SQL{
 		}
 	}
 	
-	public void insert(String username, int score, String table) throws SQLException {
+	public int getMaxID() throws SQLException{
+		StringBuilder query = new StringBuilder();
+		query.append("select MAX(id) from scores;");
+		String q = query.toString();
+		
+		ResultSet result = statement.executeQuery(q);
+		
+		result.next();
+		return Integer.parseInt(result.getString("MAX(id)"));
+	}
+	
+	public void insertWords(int id, String[] words) {
+		
+	}
+	
+	public void insert(int id, String username, int score, String table) throws SQLException {
 		PreparedStatement p;
 		
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -34,7 +48,7 @@ public class SQL{
 		
 		StringBuilder query = new StringBuilder();
 		query.append("insert into " + table + " values");
-		query.append("('" + username + "'," + "'" + score + "'" + "," + " '" + dtf.format(now) + "');");
+		query.append("(" + id + ", '" +  username + "'," + "'" + score + "'" + "," + " '" + dtf.format(now) + "');");
 		
 		String stringQuery = query.toString();
 		p = connection.prepareStatement(stringQuery);
@@ -56,30 +70,17 @@ public class SQL{
 		
 		return statement.executeQuery("select * from scores order by score desc");
 	}
-
+	
 	public static void main(String[] args) {
-		SQL s = new SQL();
-		String args2 = "*";
-		String some = "username, score";
-		
-		String[] columnNames = {"username", "score", "date"};
-		ArrayList<ArrayList<String>> data = new ArrayList<ArrayList<String>>();
-		ArrayList<String> temp = new ArrayList<String>();
-		
+		SQL sql = new SQL();
 		ResultSet result = null;
+		
 		try {
-			result = s.selectAll();
-			while(result.next()) {
-				temp = new ArrayList<String>();
-				temp.add(result.getString("username"));
-				temp.add(result.getString("score"));
-				temp.add(result.getString("date"));
-				data.add(temp);
-			}
+			result.next();
+			System.out.println(result.getString("MAX(id)"));
 		} catch (SQLException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		System.out.println(data.toString());
 	}
 }

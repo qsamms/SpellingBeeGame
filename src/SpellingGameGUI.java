@@ -4,6 +4,7 @@ import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import javax.swing.*;
 
@@ -22,8 +23,9 @@ public class SpellingGameGUI{
 	private JScrollPane scoresholder;
 	private Timer counter;
 	private StringBuilder playerwords = new StringBuilder();
-	private Set<String> usedwords = new HashSet<String>();
+	private Set<String> usedwords = new LinkedHashSet<String>();
 	private Color color = new Color(242,219,179);
+	private int nextid;
 	
 	public SpellingGameGUI() {
 		createWindow();
@@ -303,12 +305,28 @@ public class SpellingGameGUI{
 				+ score + " Nice Job!", "Game over :(", JOptionPane.PLAIN_MESSAGE);
 		
 		try {
-			sql.insert(username, score, "scores");
+			String[] words = convertSetToArr();
+			nextid = sql.getMaxID();
+			nextid++;
+			sql.insert(nextid, username, score, "scores");
+			sql.insertWords(nextid, words);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 
 		window.setContentPane(menutop);
 		window.validate();
+	}
+	
+	public String[] convertSetToArr() {
+		String[] strings = new String[usedwords.size()];
+		
+		int idx = 0;
+		
+		for(String s : usedwords) {
+			strings[idx] = s;
+		}
+		
+		return strings;
 	}
 }
