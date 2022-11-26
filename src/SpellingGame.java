@@ -30,6 +30,9 @@ public class SpellingGame{
 		//two constanants
 		for(int i = 0;i<2;i++) {
 			int_random = rand.nextInt(20);
+			while(hiveLetters.contains(upperConstanants[int_random])) {
+				int_random = rand.nextInt(20);
+			}
 			hive.append(upperConstanants[int_random]);
 			hiveLetters.add(upperConstanants[int_random]);
 			hiveLetters.add(lowerConstanants[int_random]);
@@ -38,6 +41,9 @@ public class SpellingGame{
 		//two vowels
 		for(int i = 0;i< 2;i++) {
 			int_random = rand.nextInt(6);
+			while(hiveLetters.contains(upperVowels[int_random])) {
+				int_random = rand.nextInt(20);
+			}
 			hive.append(upperVowels[int_random]);
 			hiveLetters.add(upperVowels[int_random]);
 			hiveLetters.add(lowerVowels[int_random]);
@@ -46,6 +52,9 @@ public class SpellingGame{
 		//two constanants
 		for(int i = 0;i<2;i++) {
 			int_random = rand.nextInt(20);
+			while(hiveLetters.contains(upperConstanants[int_random])) {
+				int_random = rand.nextInt(20);
+			}
 			hive.append(upperConstanants[int_random]);
 			hiveLetters.add(upperConstanants[int_random]);
 			hiveLetters.add(lowerConstanants[int_random]);
