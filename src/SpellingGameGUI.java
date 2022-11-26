@@ -134,14 +134,13 @@ public class SpellingGameGUI{
 		JTextField input = new JTextField(10);
 		JButton menu = new JButton("Back to menu");
 		JButton seeall = new JButton("See all");
-		JTextArea words = new JTextArea();
+		JTextArea words = new JTextArea(2,30);
 		JButton seeWords = new JButton("See Words");
 		JPanel seeAllPanel = new JPanel();
 		seeAllPanel.setBackground(color);
 		JPanel wordsPanel = new JPanel();
-		
-		wordsPanel.setBorder(BorderFactory.createTitledBorder("Words Used: "));
-		
+		wordsPanel.setBackground(color);
+				
 		table.getSelectionModel().addListSelectionListener(tableListener);
 		
 		toppanel.setLayout(new BoxLayout(toppanel,BoxLayout.X_AXIS));
@@ -174,7 +173,9 @@ public class SpellingGameGUI{
 		
 		helper.add(Box.createVerticalStrut(30));
 		
-		wordsPanel.add(words);
+		JScrollPane scrollPane = new JScrollPane(words);
+		scrollPane.setBorder(BorderFactory.createTitledBorder("Words Used:"));
+		wordsPanel.add(scrollPane);
 		helper.add(wordsPanel);
 		
 		helper.add(Box.createVerticalGlue());
@@ -183,7 +184,7 @@ public class SpellingGameGUI{
 		toppanel.add(Box.createHorizontalGlue());
 		toppanel.add(Box.createHorizontalStrut(50));
 		
-		leaderboardwindow.setSize(400,400);
+		leaderboardwindow.setSize(500,400);
 		leaderboardwindow.setContentPane(toppanel);
 		leaderboardwindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		leaderboardwindow.setVisible(false);
@@ -333,6 +334,7 @@ public class SpellingGameGUI{
 		gamehelper.add(Box.createVerticalStrut(30));
 		
 		gamehelper.add(textarea);
+		scores.setRows(10);
 		scoresholder = new JScrollPane(scores);
 		gamehelper.add(scoresholder);
 		
